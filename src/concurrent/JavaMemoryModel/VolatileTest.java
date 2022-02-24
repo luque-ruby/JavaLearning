@@ -14,7 +14,7 @@ public class VolatileTest {
     }
 
     public static void atomicAdd() {
-        atomicInteger.getAndIncrement();//内部使用CAS
+        atomicInteger.getAndIncrement();//内部使用CAS，直接和操作系统挂钩
     }
 
 

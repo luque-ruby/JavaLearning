@@ -8,6 +8,8 @@ import java.util.concurrent.atomic.AtomicStampedReference;
  * Created by luque_ruby on 2022/2/25.
  */
 public class CASDemo3 {
+    static AtomicStampedReference<Integer> atomicStampedInteger = new AtomicStampedReference<>(1, 1);
+
     public static void main(String[] args) {
         AtomicInteger atomicInteger = new AtomicInteger(2020);
 
@@ -26,25 +28,25 @@ public class CASDemo3 {
 //        System.out.println(atomicInteger);
 
         /** 解决以上问题*/
-        AtomicStampedReference<Integer> atomicStampedInteger = new AtomicStampedReference<>(2020, 1);
         new Thread(()->{
             int stamp = atomicStampedInteger.getStamp();
             System.out.println("a1=>" + stamp);
 
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            System.out.println(atomicStampedInteger.compareAndSet(2020, 2022,
-                    atomicStampedInteger.getStamp(), atomicStampedInteger.getStamp() + 1));
+            atomicStampedInteger.compareAndSet(1, 2,
+                    atomicStampedInteger.getStamp(), atomicStampedInteger.getStamp() + 1);
             System.out.println("a2=>" + atomicStampedInteger.getStamp());
 
-            System.out.println(atomicStampedInteger.compareAndSet(2022, 2020,
+            System.out.println(atomicStampedInteger.compareAndSet(2, 1,
                     atomicStampedInteger.getStamp(), atomicStampedInteger.getStamp() + 1));
             System.out.println("a3=>" + atomicStampedInteger.getStamp());
             }, "a").start();
+
         new Thread(()->{
             int stamp = atomicStampedInteger.getStamp();
             System.out.println("b1=>" + stamp);
@@ -55,7 +57,7 @@ public class CASDemo3 {
                 e.printStackTrace();
             }
 
-            atomicStampedInteger.compareAndSet(2020, 666, stamp, stamp + 1);
+            System.out.println(atomicStampedInteger.compareAndSet(1, 3, stamp, stamp + 1));
             System.out.println("b2=>" + stamp);
         }, "b").start();
     }
